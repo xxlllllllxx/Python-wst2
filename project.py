@@ -2,6 +2,7 @@
 # WST 2: Web And Mobile Developmnent 2
 # Python CRUD
 # Masallo, Calim, Estrella
+# https://github.com/xxlllllllxx/Python-wst2.git
 
 import tkinter as tk
 import mysql.connector as mc
