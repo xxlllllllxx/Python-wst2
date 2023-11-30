@@ -167,8 +167,8 @@ def update(tree: ttk.Treeview, data: tuple):
 
 def delete(tree: ttk.Treeview, data: tuple):
     if check(data):
-        # Delete selected id using soft deletion UPDATE set isDeleted to 1
         try:
+            # Delete selected id using soft deletion UPDATE set isDeleted to 1
             conn = get_connection()
             cursor = conn.cursor()
             cursor.execute(f"UPDATE {tbl_f} SET {f_arr[5]} = 1 WHERE {f_arr[0]}={data[0].get()};")
@@ -178,7 +178,7 @@ def delete(tree: ttk.Treeview, data: tuple):
             clear(data)
             retrieve(tree, data)
         except Exception as e:
-            mb.showerror("Update Failed", f"Failed to update Franchise ID {data[0].get()}\nError: {str(e)}")
+            mb.showerror("Update Failed", f"Failed to delete Franchise ID {data[0].get()}\nError: {str(e)}")
         finally:
             conn.close()
 
@@ -242,6 +242,5 @@ def check(data: tuple) -> bool:
 
 
 # open login UI
-# login_ui()
-main_ui("Secretary")
+login_ui()
 root.mainloop()
