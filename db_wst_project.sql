@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2023 at 06:09 AM
+-- Generation Time: Nov 30, 2023 at 08:03 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -85,7 +85,8 @@ ALTER TABLE `tbl_employee`
 -- Indexes for table `tbl_franchise`
 --
 ALTER TABLE `tbl_franchise`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `body_number` (`body_number`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -101,7 +102,7 @@ ALTER TABLE `tbl_employee`
 -- AUTO_INCREMENT for table `tbl_franchise`
 --
 ALTER TABLE `tbl_franchise`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

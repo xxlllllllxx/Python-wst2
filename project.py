@@ -16,7 +16,8 @@ dbuser = "root"
 dbpass = ""
 
 # Tables
-# "tbl_employee", ["id", "username", "password", "position", "isDeleted"]
+tbl_e = "tbl_employee"
+e_arr = ["id", "username", "password", "position", "isDeleted"]
 tbl_f = "tbl_franchise"
 f_arr = ["id", "driver_name", "body_number", "plate_number", "license_number", "isDeleted"]
 
@@ -62,14 +63,14 @@ def main_ui(position: str):
     # tree
     main_tree = ttk.Treeview(root)
     main_tree.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.NSEW)
-    main_tree["columns"] = ["id", "driver_name", "body_number", "plate_number", "license_number"]
+    main_tree["columns"] = f_arr[:-1]
 
     column_header_bind(main_tree, "#0", "#", width=5)
-    column_header_bind(main_tree, "id", "ID", width=10, anchor=tk.CENTER)
-    column_header_bind(main_tree, "driver_name", "DRIVER NAME", width=100)
-    column_header_bind(main_tree, "body_number", "BODY #", width=50, anchor=tk.CENTER)
-    column_header_bind(main_tree, "plate_number", "PLATE NUMBER", width=80, anchor=tk.CENTER)
-    column_header_bind(main_tree, "license_number", "LICENSE NUMBER", width=80, anchor=tk.CENTER)
+    column_header_bind(main_tree, f_arr[0], "ID", width=10, anchor=tk.CENTER)
+    column_header_bind(main_tree, f_arr[1], "DRIVER NAME", width=100)
+    column_header_bind(main_tree, f_arr[2], "BODY #", width=50, anchor=tk.CENTER)
+    column_header_bind(main_tree, f_arr[3], "PLATE NUMBER", width=80, anchor=tk.CENTER)
+    column_header_bind(main_tree, f_arr[4], "LICENSE NUMBER", width=80, anchor=tk.CENTER)
 
     # populate the tree
     retrieve(main_tree, data_tuple)
@@ -100,8 +101,8 @@ def main_ui(position: str):
 
 
 def get_connection() -> mc.MySQLConnection:
-    # Make connection to database
     try:
+        # Make connection to database
         conn = mc.connect(host=host, port=port, database=database, user=dbuser, password=dbpass)
         return conn
     except mc.Error as err:  # Error Handling
@@ -128,7 +129,7 @@ def create(tree: ttk.Treeview, data: tuple):
 
 def retrieve(tree: ttk.Treeview, data: tuple):
     try:
-        # Retrieve table using SELECT
+        # Retrieve table using SELECT only if isDeleted is false
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM {tbl_f} WHERE {f_arr[5]} = 0")
@@ -153,7 +154,7 @@ def update(tree: ttk.Treeview, data: tuple):
             # Update entries using UPDATE with parameterized query
             conn = get_connection()
             cursor = conn.cursor()
-            cursor.execute(f"""UPDATE {tbl_f} SET {f_arr[1]}=%s, {f_arr[2]}=%s, {f_arr[3]}=%s, {f_arr[4]}=%s WHERE {f_arr[0]}=%s;""",
+            cursor.execute(f"UPDATE {tbl_f} SET {f_arr[1]}=%s, {f_arr[2]}=%s, {f_arr[3]}=%s, {f_arr[4]}=%s WHERE {f_arr[0]}=%s;",
                            (data[1].get(), data[2].get(), data[3].get(), data[4].get(), int(data[0].get())))
             conn.commit()
             mb.showinfo("Update Success", f"Franchise ID {int(data[0].get())} updated.")
@@ -189,7 +190,8 @@ def login(username_val: str, password_val: str):
         # login functionality -> returns the position of the user if logged in
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT position, username FROM tbl_employee WHERE username=%s AND password=%s AND isDeleted=0", (username_val, password_val))
+        cursor.execute(f"SELECT {e_arr[3]}, {e_arr[1]} FROM {tbl_e} WHERE {e_arr[1]}=%s AND {e_arr[2]}=%s AND isDeleted=0",
+                       (username_val, password_val))
         result = cursor.fetchone()
         conn.commit()
         if result is not None:
@@ -197,7 +199,7 @@ def login(username_val: str, password_val: str):
             # clean the root of login ui
             for widget in root.winfo_children():
                 widget.grid_forget()
-            # repopultate root with new ui
+            # open main ui
             main_ui(result[0])
         else:
             mb.showwarning("Login Failed", "Username and Password not found!")
